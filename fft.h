@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 #include <vector> 
+#include <time.h>
 
 // blackmann harris consts
 #define A0 0.35875

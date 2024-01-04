@@ -1,6 +1,5 @@
 #include "custom_fft.h"
 #include <matplotlibcpp.h>
-#include <time.h>
 
 namespace plt = matplotlibcpp;
 
@@ -11,17 +10,19 @@ int main() {
     start = clock();
 
     // Set the size of the input array
-    // const int N = SAMPLE_RATE*5;
-    const int N = 2 << 10;
+    const int N = SAMPLE_RATE*5;
+    // const int N = 2 << 10;
 
     std::complex<double> X_k[N];
     
     std::complex<double> x_n[N];
-    for (int i = 0; i < N; ++i) {
-        x_n[i].real(sin(2.0*M_PI*i/SAMPLE_RATE) + sin(100*2.0*M_PI*i/SAMPLE_RATE));
-        x_n[i].imag(0);
-    }
+    // for (int i = 0; i < N; ++i) {
+    //     x_n[i].real(sin(2.0*M_PI*i/SAMPLE_RATE) + sin(100*2.0*M_PI*i/SAMPLE_RATE));
+    //     x_n[i].imag(0);
+    // }
     
+    fill_rand(x_n, N);
+
     std::complex<double> x_n_win[N];
     for (int i = 0; i < N; ++i) {
         x_n_win[i].real(x_n[i].real() * blk_harris(i, N));
@@ -30,21 +31,39 @@ int main() {
 
     // custom_DFT(x_n_win, X_k, N);        // DFT
     custom_DFT(x_n, X_k, N);        // DFT
-    // fft(x_n, X_k, N);        // FFT
+
+    // add harmonics 
+    X_k[int(60.0*N/SAMPLE_RATE)].real(10000);
+    X_k[int(120.0*N/SAMPLE_RATE)].real(3000);
+    X_k[int(180.0*N/SAMPLE_RATE)].real(1000);
+    
     custom_DFT(X_k, x_n, N, IFFT);    // IDFT
 
-    std::vector<double> x_plot(N);
-    std::vector<double> y_plot(N);
+    // fft(x_n, X_k, N);        // FFT
+
+    std::vector<double> time_domain(N);
+    std::vector<double> freq_domain(N);
+    // std::vector<double> times = gen_times(SAMPLE_RATE, N);
+    // std::vector<double> freqs = gen_freqs(SAMPLE_RATE, N);
+
     for (int i = 0; i < N; ++i) {
-        x_plot[i] = x_n[i].real();
-        y_plot[i] = abs(X_k[i]);
+        time_domain[i] = x_n[i].real();
+        freq_domain[i] = abs(X_k[i]);
     }
 
+
     plt::figure(1);
-    plt::plot(x_plot);
-    
+    plt::plot(gen_times(SAMPLE_RATE, N), time_domain);
+    plt::title("t-sig");
+    plt::xlabel("time (s)");
+    plt::ylabel("Magnitude");
+    plt::grid(true);
+
     plt::figure(2);
-    plt::plot(y_plot);
+    plt::plot(gen_freqs(SAMPLE_RATE, N), freq_domain);
+    plt::title("fft");
+    plt::xlabel("Frequency (Hz)");
+    plt::ylabel("Magnitude");
     
     plt::show();
 
@@ -112,12 +131,32 @@ void fft(const std::complex<double>* x_n, std::complex<double>* X_k, int N) {
 
 
 
-void gen_rand(std::complex<double>* x_n, int N){    
+void fill_rand(std::complex<double>* x_n, int N){    
     std::srand(std::time(0));
     double position = double(std::rand())/RAND_MAX;  // Initial position
     for (int i = 0; i < N; ++i) {
-        position += double(std::rand())/RAND_MAX;
+        position += (double(std::rand())/RAND_MAX - 0.5);
         x_n[i].real(position);
         x_n[i].imag(0);
-        }
     }
+}
+
+std::vector<double> gen_freqs(double F_S, int N){
+    std::vector<double> result(N);
+
+    for(int i = 0; i < N; i++){
+        result[i] = i*F_S/N;
+    }
+
+    return result;
+}
+
+std::vector<double> gen_times(double F_S, int N){
+    std::vector<double> result(N);
+
+    for(int i = 0; i < N; i++){
+        result[i] = i/F_S;
+    }
+
+    return result;
+}

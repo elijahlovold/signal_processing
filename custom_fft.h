@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <fstream>
@@ -6,6 +8,7 @@
 #include <complex.h>
 #include <cstdlib>
 #include <ctime>
+#include <time.h>
 
 // blackmann harris consts
 #define A0 0.35875
@@ -28,3 +31,7 @@ void custom_DFT(std::complex<double>* x_n, std::complex<double>* X_k, int N, fft
 
 void fft(const std::complex<double>* x_n, std::complex<double>* X_k, int N);
 
+void fill_rand(std::complex<double>* x_n, int N);    
+
+std::vector<double> gen_freqs(double F_S, int N);
+std::vector<double> gen_times(double F_S, int N);

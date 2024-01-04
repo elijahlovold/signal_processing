@@ -10,7 +10,7 @@
 #define A1 0.48829
 #define A2 0.14128
 #define A3 0.01168
-
+ 
 #define REAL 0
 #define IMAG 1
 
