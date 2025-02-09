@@ -1,31 +1,24 @@
 #include <matplotlibcpp.h>
-#include <iostream>
 #include <fftw3.h>
 #include <math.h>
 #include <vector>
-#include <complex>
-
-// blackmann harris consts
-#define A0 0.35875
-#define A1 0.48829
-#define A2 0.14128
-#define A3 0.01168
- 
-#define REAL 0
-#define IMAG 1
+#include <sig_utils.h>
+#include <transfer.h>
 
 #define SAMPLE_RATE 800.0
 
-double cpx_abs(fftw_complex* x, int i);
-double blk_harris(int i, int n);
-
 using namespace std;
 namespace plt = matplotlibcpp;
-
-double blk_harris(int i, int n);
-double cpx_abs(fftw_complex* x, int i);
+namespace tf = transfer_functions;
 
 int main() {
+    // auto ab_pair = tf::butter(6, 5);
+    // std::vector<double> a = ab_pair.first;
+    // std::vector<double> b = ab_pair.second;
+
+    // tf::plot_ht(a, b, 40);
+
+
     // Set the size of the input array
     const int n = SAMPLE_RATE*5;
 
@@ -41,7 +34,7 @@ int main() {
         // x[i][REAL] = sin(M_PI*(i-n/2)/SAMPLE_RATE)/(M_PI*(i-n/2)/SAMPLE_RATE); 
         x[i][IMAG] = 0;
     }
-    
+
     for (int i = 0; i < n; ++i) {
         x_win[i][REAL] = x[i][REAL] * blk_harris(i, n); 
         x_win[i][IMAG] = 0;
@@ -58,10 +51,10 @@ int main() {
 
     plt::figure();
     plt::plot(x_plot);
-    
+
     plt::figure();
     plt::plot(y_plot);
-    
+
     plt::show();
 
     return 0;
@@ -69,13 +62,3 @@ int main() {
 
 }
 
-double blk_harris(int i, int n){
-    return A0 
-         - A1 * cos(2.0*M_PI*i / (n - 1))
-         + A2 * cos(4.0*M_PI*i / (n - 1)) 
-         - A3 * cos(6.0*M_PI*i / (n - 1));
-}
-
-double cpx_abs(fftw_complex* x, int i){
-    return sqrt(x[i][REAL]*x[i][REAL] + x[i][IMAG]*x[i][IMAG]);
-}

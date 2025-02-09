@@ -11,7 +11,7 @@ find_package(Python3 COMPONENTS Development REQUIRED)
 include_directories(${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS} .)
 
 # Sources
-set(SOURCES examples.cpp transfer.cpp)
+set(SOURCES examples.cpp sig_utils.cpp transfer.cpp)
 
 # Executable
 add_executable(signal_processing ${SOURCES})

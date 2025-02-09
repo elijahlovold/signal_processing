@@ -1,4 +1,4 @@
-#include "transfer.h"
+#include <transfer.h>
 
 namespace transfer_functions {
     std::pair<std::vector<double>, std::vector<double>> bilinear(const std::vector<double>& b_s, const std::vector<double>& a_s, double T){
@@ -212,7 +212,7 @@ namespace transfer_functions {
         plt::show();
     }
 
-    void plot_TF(const std::vector<double>& b, const std::vector<double>& a, TF_type H_, freq_type f, graph_type t, int N){
+    void plot_TF(const std::vector<double>& b, const std::vector<double>& a, TF_type H_, freq_type f, graph_type t, int N, double sample_rate) {
         std::vector<double> gain(N);
         std::vector<double> freqs(N);
 
@@ -225,7 +225,7 @@ namespace transfer_functions {
             if (H_){
                 freqs[i] = (f ? 1 : 2.0*M_PI)*(i/N)*FRQ;
             } else {
-                freqs[i] = (f ? SAMPLE_RATE/2 : 1) * i/N;
+                freqs[i] = (f ? sample_rate/2 : 1) * i/N;
             }
 
             num = 0;
@@ -266,13 +266,13 @@ namespace transfer_functions {
         plt::show();
     }
 
-    void plot_t(const std::vector<double>& x_n){
+    void plot_t(const std::vector<double>& x_n, double sample_rate){
         int N = x_n.size();
 
         std::vector<double> n(N);
 
         for (double i = 0; i < N; i++){
-            n[i] = i/SAMPLE_RATE;
+            n[i] = i/sample_rate;
         }
 
         plt::figure();

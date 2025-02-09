@@ -1,4 +1,5 @@
 #include "custom_fft.h"
+#include <sig_utils.h>
 #include <matplotlibcpp.h>
 
 namespace plt = matplotlibcpp;
@@ -74,13 +75,6 @@ int main() {
     return 0;
 }
 #endif
-
-double blk_harris(int i, int N){
-    return A0 
-         - A1 * cos(2.0*M_PI*i / (N - 1))
-         + A2 * cos(4.0*M_PI*i / (N - 1)) 
-         - A3 * cos(6.0*M_PI*i / (N - 1));
-}
 
 void custom_DFT(std::complex<double>* x1, std::complex<double>* x2, int N, fft_type s){
     for (int k = 0; k < N; k++){
