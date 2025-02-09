@@ -3,3 +3,7 @@ libfftw3-3.dll
 compiles.txt
 *.exe
 .vscode
+
+/build
+/dist
+/.cache
